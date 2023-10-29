@@ -10,6 +10,14 @@ public class PlayerInteractUI : MonoBehaviour
     [SerializeField] private PlayerInteract playerInteract;
     [SerializeField] private TMP_Text InteractTMP_Text;
 
+
+    private void Start()
+    {
+        containerGameObject = GameObject.FindWithTag("CanvasContainer");
+        InteractTMP_Text = GameObject.FindWithTag("CanvasInteractText").GetComponent<TMP_Text>();
+    }
+
+
     private void Update()
     {
         if (playerInteract.GetInteractableObject() != null)
@@ -27,12 +35,12 @@ public class PlayerInteractUI : MonoBehaviour
     {
         containerGameObject.SetActive(true);
         InteractTMP_Text.text = interactable.GetInteractText();
-        Debug.Log("showing");
+        //Debug.Log("showing");
     }
 
     private void Hide()
     {
         containerGameObject.SetActive(false);
-        Debug.Log("hiding");
+        //Debug.Log("hiding");
     }
 }

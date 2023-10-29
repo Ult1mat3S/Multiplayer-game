@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using FishNet.Connection;
 using FishNet.Object;
-#if ENABLE_INPUT_SYSTEM 
+using System.ComponentModel;
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 
@@ -108,6 +109,7 @@ namespace StarterAssets
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
         private Camera playerCamera;
+       
 
 
         private const float _threshold = 0.01f;
@@ -158,7 +160,7 @@ namespace StarterAssets
         private void Start()
         {
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
-
+           
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();

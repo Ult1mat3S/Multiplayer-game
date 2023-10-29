@@ -7,7 +7,7 @@ public class ObjectInteractable : MonoBehaviour, IInteractable {
     [SerializeField] private string InteractText;
    public void Interact(Transform interactorTransform)
     {
-        Debug.Log("Interact!");
+        Debug.Log(InteractText);
     }
 
 
