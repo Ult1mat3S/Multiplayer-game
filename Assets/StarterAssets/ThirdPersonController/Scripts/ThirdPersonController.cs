@@ -2,6 +2,7 @@
 using FishNet.Connection;
 using FishNet.Object;
 using System.ComponentModel;
+using UnityEngine.InputSystem.XR;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -109,8 +110,11 @@ namespace StarterAssets
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
         private Camera playerCamera;
-       
 
+        private bool isCrouching;
+        private Vector3 originalCenter;
+        private float originalHeight;
+        private float originalMoveSpeed;
 
         private const float _threshold = 0.01f;
 
@@ -175,6 +179,11 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+
+            transform.tag = "Player";
+            originalCenter = _controller.center;
+            originalHeight = _controller.height;
+            originalMoveSpeed = MoveSpeed;
         }
 
         private void Update()
@@ -184,9 +193,22 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+
+            if (!Keyboard.current.leftCtrlKey.wasPressedThisFrame && isCrouching)
+            {
+                Vector3 point0 = transform.position + originalCenter - new Vector3(0.0f, originalHeight, 0.0f);
+                Vector3 point1 = transform.position + originalCenter + new Vector3(0.0f, originalHeight, 0.0f);
+                if (Physics.OverlapCapsule(point0, point1, _controller.radius).Length == 0)
+                {
+                    _controller.height = originalHeight;
+                    _controller.center = originalCenter;
+                    MoveSpeed = originalMoveSpeed;
+                    isCrouching = false;
+                }
+            }
         }
 
-        private void LateUpdate()
+            private void LateUpdate()
         {
             CameraRotation();
         }
@@ -301,6 +323,14 @@ namespace StarterAssets
             {
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+            }
+
+            if (Keyboard.current.leftCtrlKey.wasPressedThisFrame)
+            {
+                _controller.height = 1f;
+                _controller.center = new Vector3(0f, -0.5f, 0f);
+                MoveSpeed = 3f;
+                isCrouching = true;
             }
         }
 
