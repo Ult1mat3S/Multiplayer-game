@@ -1,3 +1,7 @@
+#if UNITY_EDITOR
+using ParrelSync;
+using UnityEditor;
+#endif
 using UnityEngine;
 using FishNet;
 using FishNet.Transporting.Tugboat;
@@ -23,7 +27,9 @@ public class ConnectionStarter : MonoBehaviour
     {
         if(args.ConnectionState == LocalConnectionState.Stopping)
         {
+#if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
+#endif
         }
     }
 
@@ -41,7 +47,7 @@ public class ConnectionStarter : MonoBehaviour
             return;
         }
         Debug.Log("After TryGetComponent");
-
+#if UNITY_EDITOR
         if (ParrelSync.ClonesManager.IsClone())
         {
             _tugboat.StartConnection(false);
@@ -51,5 +57,6 @@ public class ConnectionStarter : MonoBehaviour
             _tugboat.StartConnection(false);
             _tugboat.StartConnection(true);
         }
+#endif
     }
 }
