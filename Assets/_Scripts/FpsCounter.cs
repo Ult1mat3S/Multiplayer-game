@@ -16,7 +16,6 @@ public class FpsCounter : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(Text);
         // Cache strings and create array
         {
             for (int i = 0; i < _cacheNumbersAmount; i++)
