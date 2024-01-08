@@ -3,60 +3,60 @@ using ParrelSync;
 using UnityEditor;
 #endif
 using UnityEngine;
-using FishNet;
-using FishNet.Transporting.Tugboat;
-using FishNet.Transporting;
+using Photon.Pun;
+using TMPro;
 
-public class ConnectionStarter : MonoBehaviour
+public class ConnectionStarter : MonoBehaviourPunCallbacks
 {
-    private Tugboat _tugboat;
-  
-    private void OnEnable()
+[SerializeField] TMP_InputField roomNameInputField;
+[SerializeField] TMP_Text errorText;
+[SerializeField] TMP_Text roomNameText;
+
+    void Start()
     {
-        InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
-        Debug.Log("Subscribe to connection state");
+PhotonNetwork.ConnectUsingSettings();
     }
 
-    private void OnDisable()
-    {
-        InstanceFinder.ClientManager.OnClientConnectionState -= OnClientConnectionState;
-        Debug.Log("Unsubscribe to connection state");
-    }
+public override void OnConnectedToMaster()
+{
+    PhotonNetwork.JoinLobby();
+}
 
-    private void OnClientConnectionState(ClientConnectionStateArgs args)
-    {
-        if(args.ConnectionState == LocalConnectionState.Stopping)
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        }
-    }
+public override void OnJoinedLobby()
+{
+MenuManager.Instance.OpenMenu("MainMenu");
+}
 
-    private void Start()
-    {
-        Debug.Log("Before TryGetComponent");
-        if (TryGetComponent(out Tugboat _t))
+public void CreateRoom()
+{
+    if(string.IsNullOrEmpty(roomNameInputField.text))
         {
-            _tugboat = _t;
-            Debug.Log("Tugboat component found!");
-        }
-        else
-        {
-            Debug.LogError("Couldn't get tugboat!", this);
             return;
         }
-        Debug.Log("After TryGetComponent");
-#if UNITY_EDITOR
-        if (ParrelSync.ClonesManager.IsClone())
-        {
-            _tugboat.StartConnection(false);
-        }
-        else
-        {
-            _tugboat.StartConnection(false);
-            _tugboat.StartConnection(true);
-        }
-#endif
+        PhotonNetwork.CreateRoom(roomNameInputField.text);
+        MenuManager.Instance.OpenMenu("LoadingMenu");
     }
+
+public override void OnJoinedRoom()
+{
+MenuManager.Instance.OpenMenu("RoomMenu");
+roomNameText.text = PhotonNetwork.CurrentRoom.Name;
+}
+
+public override void OnCreateRoomFailed(short returnCode, string message)
+{
+errorText.text = "Room Creation Failed: " + message;
+MenuManager.Instance.OpenMenu("ErrorMenu");
+}
+
+public void LeaveRoom()
+{
+PhotonNetwork.LeaveRoom();
+MenuManager.Instance.OpenMenu("Loading");
+}
+
+public override void OnLeftRoom()
+{
+    MenuManager.Instance.OpenMenu("MainMenu");
+}
 }
