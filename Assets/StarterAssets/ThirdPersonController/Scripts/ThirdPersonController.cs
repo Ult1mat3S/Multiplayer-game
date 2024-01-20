@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using FishNet.Connection;
-using FishNet.Object;
 using System.ComponentModel;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
+using Photon.Pun;
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
  */
@@ -15,7 +14,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM 
     [RequireComponent(typeof(PlayerInput))]
 #endif
-    public class ThirdPersonController : NetworkBehaviour
+    public class ThirdPersonController : MonoBehaviour
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
@@ -109,12 +108,12 @@ namespace StarterAssets
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
         private Camera playerCamera;
-       
-
 
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+
+        PhotonView PV;
 
         private bool IsCurrentDeviceMouse
         {
@@ -127,12 +126,9 @@ namespace StarterAssets
 #endif
             }
         }
-
-
-
-
         private void Awake()
         {
+            PV = GetComponent<PhotonView>();
             // get a reference to our main camera
             if (_mainCamera == null)
             {
@@ -140,25 +136,12 @@ namespace StarterAssets
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
         }
-
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            if (base.IsOwner)
-            {
-                Debug.Log("is owner");
-                playerCamera = Camera.main;
-
-            }
-            else
-            {
-                Debug.Log("is not owner");
-                gameObject.GetComponent<ThirdPersonController>().enabled = false;
-            }
-        }
-
         private void Start()
         {
+            if (!PV.IsMine) 
+            {
+                Destroy(GetComponentInChildren<Camera>().gameObject);
+            }
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
            
             _hasAnimator = TryGetComponent(out _animator);
@@ -166,6 +149,7 @@ namespace StarterAssets
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM 
             _playerInput = GetComponent<PlayerInput>();
+
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -179,6 +163,8 @@ namespace StarterAssets
 
         private void Update()
         {
+            if (!PV.IsMine)
+                return;
             _hasAnimator = TryGetComponent(out _animator);
 
             JumpAndGravity();

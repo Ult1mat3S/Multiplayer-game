@@ -442,7 +442,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &103877792
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1224,7 +1224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   containerGameObject: {fileID: 27750446}
-  playerInteract: {fileID: 2090129114243832164, guid: 81e0a814fa284d4408e617a09eb421f1, type: 3}
+  playerInteract: {fileID: 1583880908687821462, guid: e0b6546faf214aa46846eaca336ad1a1, type: 3}
   InteractTMP_Text: {fileID: 875001997}
 --- !u!1 &764477427
 GameObject:

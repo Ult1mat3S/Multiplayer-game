@@ -4,10 +4,10 @@ public class MenuManager : MonoBehaviour
 {
 public static MenuManager Instance;
 
-void Awake()
-{
-    Instance = this;
-}
+    void Awake()
+    {
+        Instance = this;
+    }
 
     [SerializeField] Menu[] menus;
 
@@ -17,13 +17,13 @@ for(int i = 0; i < menus.Length; i++)
     {
         if(menus[i].menuName == menuName)
         {
-            OpenMenu(menus[i]);
+            menus[i].Open();
         }
         else if(menus[i].open)
         {
             CloseMenu(menus[i]);
         }
-    }
+      }
     }
 
     public void OpenMenu(Menu menu)
@@ -35,12 +35,12 @@ for(int i = 0; i < menus.Length; i++)
             CloseMenu(menus[i]);
         }
     }
-menu.Open();
+        menu.Open();
     }
 
 
     public void CloseMenu(Menu menu)
     {
-menu.Close();
+        menu.Close();
     }
 }
