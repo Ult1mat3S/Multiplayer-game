@@ -141,6 +141,7 @@ namespace StarterAssets
             if (!PV.IsMine) 
             {
                 Destroy(GetComponentInChildren<Camera>().gameObject);
+                Debug.Log("destroy camera");
             }
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
            
@@ -170,6 +171,12 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+        }
+
+        private void FixedUpdate()
+        {
+            if (!PV.IsMine)
+                return;
         }
 
         private void LateUpdate()

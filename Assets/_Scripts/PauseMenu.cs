@@ -16,10 +16,10 @@ public class PauseMenu : MonoBehaviour
     void Start()
     {
         thirdPersonController = GameObject.FindWithTag("Player")?.GetComponent<ThirdPersonController>();
-        if (thirdPersonController == null)
-        {
-            Debug.LogError("ThirdPersonController not found or not tagged as 'Player'");
-        }
+        //if (thirdPersonController == null)
+        //{
+        //    Debug.LogError("ThirdPersonController not found or not tagged as 'Player'");
+        //}
     }
 
 

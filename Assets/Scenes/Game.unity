@@ -1218,7 +1218,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 709062860}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9651b51cf6981ec43b34b2bc95abb3bd, type: 3}
   m_Name: 
@@ -3244,13 +3244,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1680228815}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3bd7c4e69f4218b4d9ac20b9b9727d1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PauseMenuUI: {fileID: 1830052392}
-  thirdPersonController: {fileID: 0}
+  thirdPersonController: {fileID: 3631484411952310392, guid: e0b6546faf214aa46846eaca336ad1a1, type: 3}
   playerReference: {fileID: 1315631827}
 --- !u!1 &1830052392
 GameObject:
