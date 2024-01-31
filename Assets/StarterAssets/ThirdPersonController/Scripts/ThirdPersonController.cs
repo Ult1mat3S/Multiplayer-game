@@ -217,6 +217,11 @@ namespace StarterAssets
                     EquipItem(itemIndex - 1);
                 }
             }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                items[itemIndex].Use();
+            }
         }
 
         void EquipItem(int _index)
