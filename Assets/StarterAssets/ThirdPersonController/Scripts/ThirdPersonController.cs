@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.ComponentModel;
+using ExitGames.Client.Photon;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 using Photon.Pun;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Photon.Realtime;
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
  */
@@ -14,7 +17,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM 
     [RequireComponent(typeof(PlayerInput))]
 #endif
-    public class ThirdPersonController : MonoBehaviour
+    public class ThirdPersonController : MonoBehaviourPunCallbacks
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
@@ -113,6 +116,11 @@ namespace StarterAssets
 
         private bool _hasAnimator;
 
+        [SerializeField] Item[] items;
+
+        int itemIndex;
+        int previousItemIndex = -1;
+
         PhotonView PV;
 
         private bool IsCurrentDeviceMouse
@@ -138,7 +146,12 @@ namespace StarterAssets
         }
         private void Start()
         {
-            if (!PV.IsMine) 
+            if (PV.IsMine) 
+            {
+                EquipItem(0);
+                
+            }
+            else
             {
                 Destroy(GetComponentInChildren<Camera>().gameObject);
                 Debug.Log("destroy camera");
@@ -171,6 +184,72 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (Input.GetKeyDown((i + 1).ToString()))
+                {
+                    EquipItem(i);
+                    break;
+                }
+            }
+
+            if (Input.GetAxisRaw("Mouse ScrollWheel") > 0f)
+            {
+                if(itemIndex >= items.Length - 1)
+                {
+                    EquipItem(0);
+                }
+                else 
+                { 
+                    EquipItem(itemIndex + 1); 
+                }
+               
+            }
+            else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f)
+            {
+                if (itemIndex <= 0)
+                {
+                    EquipItem(items.Length - 1);
+                }
+                else
+                {
+                    EquipItem(itemIndex - 1);
+                }
+            }
+        }
+
+        void EquipItem(int _index)
+        {
+            if (_index == previousItemIndex)
+                return;
+
+            itemIndex = _index;
+
+            items[itemIndex].itemGameObject.SetActive(true);
+
+            if (previousItemIndex != -1)
+            {
+                items[previousItemIndex].itemGameObject.SetActive(false);
+            }
+
+            previousItemIndex = itemIndex;
+
+
+            if (PV.IsMine)
+            {
+                Hashtable hash = new Hashtable();
+                hash.Add("itemIndex", itemIndex);
+                PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+            }
+        }
+
+        public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+        {
+            if (changedProps.ContainsKey("itemIndex") && !PV.IsMine && targetPlayer == PV.Owner)
+            {
+                EquipItem((int)changedProps["itemIndex"]);
+            }
         }
 
         private void FixedUpdate()
